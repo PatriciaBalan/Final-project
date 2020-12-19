@@ -99,7 +99,7 @@ ALTER TABLE tournament_registration
 ADD COLUMN attendant_id INT, 
 ADD FOREIGN KEY(attendant_id) REFERENCES tournament_attendant(attendant_id)
 
-
+......
 
 
 
