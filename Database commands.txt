@@ -1,0 +1,105 @@
+CREATE DATABASE tournamently_resources;
+
+CREATE TABLE users (
+user_id INT PRIMARY KEY AUTO_INCREMENT, 
+user_name VARCHAR(20) NOT NULL,
+user_type VARCHAR(20) NOT NULL,
+firstName VARCHAR(25) NOT NULL,
+lastName VARCHAR(25) NOT NULL,
+email VARCHAR(60) NOT NULL
+)
+
+CREATE TABLE admin (
+admin_id INT PRIMARY KEY AUTO_INCREMENT, 
+user_id INT NOT NULL,
+user_type VARCHAR(20) NOT NULL,
+admin_name VARCHAR(25) NOT NULL,
+email VARCHAR(60) NOT NULL,
+FOREIGN KEY(user_id) REFERENCES users(user_id)
+)
+
+CREATE TABLE tournament_organizer (
+organizer_id INT PRIMARY KEY AUTO_INCREMENT, 
+user_id INT NOT NULL,
+user_type VARCHAR(20) NOT NULL,
+organizer_name VARCHAR(40) NOT NULL,
+email VARCHAR(60) NOT NULL,
+FOREIGN KEY(user_id) REFERENCES users(user_id)
+)
+
+CREATE TABLE tournament_registration (
+tournament_id INT PRIMARY KEY AUTO_INCREMENT, 
+tournament_name VARCHAR(40) NOT NULL,
+tournament_date DATETIME NOT NULL, 
+atendees_limit INT NOT NULL,
+event_type VARCHAR(60) NOT NULL,
+event_location VARCHAR(40) NOT NULL,
+participant_list VARCHAR(8000) NOT NULL
+)
+
+CREATE TABLE event_type (
+event_type VARCHAR(50) PRIMARY KEY, 
+event_point_size INT NOT NULL,
+tournament_id INT NOT NULL,
+event_frequency VARCHAR(40)
+)
+
+CREATE TABLE participant_list (
+list_id INT PRIMARY KEY AUTO_INCREMENT, 
+event_point_size INT NOT NULL,
+participant_list VARCHAR(8000) NOT NULL,
+event_type VARCHAR(50) NOT NULL,
+tournament_id INT NOT NULL,
+user_id INT NOT NULL,
+FOREIGN KEY(user_id) REFERENCES users(user_id),
+FOREIGN KEY(tournament_id) REFERENCES tournament_registration(tournament_id),
+FOREIGN KEY(event_type) REFERENCES event_type(event_type)
+)
+
+CREATE TABLE tournament_attendant (
+attendant_id INT PRIMARY KEY AUTO_INCREMENT, 
+user_type VARCHAR(20) NOT NULL,
+tournament_id INT NOT NULL,
+user_id INT NOT NULL,
+tournament_name VARCHAR(40) NOT NULL,
+lifetime_score INT,
+lifetime_wins INT,
+lifetime_losses INT, 
+lifetime_ties INT,
+FOREIGN KEY(user_id) REFERENCES users(user_id),
+FOREIGN KEY(tournament_id) REFERENCES tournament_registration(tournament_id)
+)
+
+CREATE TABLE tournament_statistics (
+participant_statistics_id INT PRIMARY KEY AUTO_INCREMENT, 
+tournament_id INT NOT NULL,
+attendant_id INT NOT NULL,
+tournament_name VARCHAR(40) NOT NULL,
+score INT NOT NULL,
+wins INT NOT NULL,
+losses INT NOT NULL, 
+score_ties INT NOT NULL,
+FOREIGN KEY(attendant_id) REFERENCES tournament_attendant(attendant_id),
+FOREIGN KEY(tournament_id) REFERENCES tournament_registration(tournament_id)
+)
+
+ALTER TABLE tournament_organizer 
+ADD COLUMN tournament_id INT NOT NULL,
+ADD FOREIGN KEY(tournament_id) REFERENCES tournament_registration(tournament_id)
+
+ALTER TABLE tournament_registration
+ADD FOREIGN KEY(event_type) REFERENCES event_type(event_type)
+
+ALTER TABLE tournament_registration
+DROP COLUMN participant_list,
+ADD COLUMN list_id INT NOT NULL, 
+ADD FOREIGN KEY(list_id) REFERENCES participant_list(list_id)
+
+ALTER TABLE tournament_registration
+ADD COLUMN attendant_id INT, 
+ADD FOREIGN KEY(attendant_id) REFERENCES tournament_attendant(attendant_id)
+
+
+
+
+
